@@ -5,6 +5,7 @@ const express = require("express");
 const { NotFoundError } = require("./expressError");
 const morgan = require("morgan");
 const companiesRouter = require("./routes/companies");
+const invoicesRouter = require("./routes/invoices");
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use("/companies", companiesRouter);
-
+app.use("/invoices", invoicesRouter);
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */
 app.use(function (req, res, next) {

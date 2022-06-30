@@ -6,7 +6,7 @@ const companiesRouter = new express.Router();
 
 const { NotFoundError, BadRequestError } = require("../expressError");
 
-/** Gets all companies, Returns list of companies, like 
+/** Gets all companies, Returns list of companies, like
  *  {companies: [{code, name}, ...]} */
 companiesRouter.get("/", async function (req, res) {
   const results = await db.query(
@@ -16,7 +16,7 @@ companiesRouter.get("/", async function (req, res) {
   return res.json({ companies });
 });
 
-/** Gets a single company, Return obj of company: 
+/** Gets a single company, Return obj of company:
  *  {company: {code, name, description}}.
  *  If company is not found, returns NotFoundError with status code of 404 */
 companiesRouter.get("/:code", async function (req, res) {
@@ -31,7 +31,7 @@ companiesRouter.get("/:code", async function (req, res) {
   return res.json({ company });
 });
 
-/** Tries to add a company, if successful returns obj of new company: 
+/** Tries to add a company, if successful returns obj of new company:
  *  {company: {code, name, description}}. If not, gives BadRequestError
  *  and status code of 400. */
 companiesRouter.post("/", async function (req, res) {
@@ -48,11 +48,11 @@ companiesRouter.post("/", async function (req, res) {
     const company = results.rows[0];
     return res.status(201).json({ company });
   } catch {
-    throw new NotFoundError();
+    throw new BadRequestError();
   }
 });
 
-/** Updates a company, if successful returns update company object: 
+/** Updates a company, if successful returns update company object:
  *  {company: {code, name, description}}.
  *  If not, returns NotFoundError with status code of 404. */
 companiesRouter.put("/:code", async function (req, res) {
