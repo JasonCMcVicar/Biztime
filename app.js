@@ -2,10 +2,16 @@
 
 const express = require("express");
 const { NotFoundError } = require("./expressError");
+const morgan = require("morgan");
+const companiesRouter = require("./routes/companies");
 
 const app = express();
 
+app.use(morgan('dev'));
+
 app.use(express.json());
+
+app.use("/companies", companiesRouter);
 
 
 /** 404 handler: matches unmatched routes; raises NotFoundError. */
