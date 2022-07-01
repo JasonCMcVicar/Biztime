@@ -17,17 +17,29 @@ companiesRouter.get("/", async function (req, res) {
 });
 
 /** Gets a single company, Return obj of company:
- *  {company: {code, name, description}}.
+ *  {company: {code, name, description, invoices: [id, ...]}}.
  *  If company is not found, returns NotFoundError with status code of 404 */
 companiesRouter.get("/:code", async function (req, res) {
+  const code = req.params.code;
   const results = await db.query(
     `SELECT code, name, description
         FROM companies
-        WHERE code = $1`, [req.params.code]);
+        WHERE code = $1`, [code]);
   const company = results.rows[0];
   if (company === undefined) {
     throw new NotFoundError();
   }
+
+  const resultsInvoices = await db.query(
+    `SELECT code, name, description
+        FROM invoices
+        JOIN companies
+        ON invoices.comp_code = companies.code
+        WHERE companies.code = $1`, [code]);
+
+  const invoices = resultsInvoices.rows;
+  company.invoices = invoices;
+
   return res.json({ company });
 });
 
