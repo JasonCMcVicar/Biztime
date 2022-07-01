@@ -17,19 +17,21 @@ invoicesRouter.get("/", async function (req, res) {
 });
 
 /** Gets a single invoice, Return obj of invoice:
- *  {invoice: {id, amt, paid, add_date, paid_date, company: 
+ *  {invoice: {id, amt, paid, add_date, paid_date, company:
  *  {code, name, description}}.
  *  If company is not found, returns NotFoundError with status code of 404 */
 invoicesRouter.get("/:id", async function (req, res) {
-  const id = req.params.id
+  const id = req.params.id;
+
   const resultsInvoice = await db.query(
     `SELECT id, amt, paid, paid_date
         FROM invoices
         WHERE id = $1`, [id]);
+
   const invoice = resultsInvoice.rows[0];
-  if (invoice === undefined) {
-    throw new NotFoundError();
-  }
+  //message here
+  if (invoice === undefined) throw new NotFoundError();
+
   const resultsCompany = await db.query(
     `SELECT code, name, description
         FROM companies
@@ -37,6 +39,7 @@ invoicesRouter.get("/:id", async function (req, res) {
         ON invoices.comp_code = companies.code
         WHERE invoices.id = $1`, [id]);
   const company = resultsCompany.rows[0];
+
   invoice.company = company;
   return res.json({ invoice });
 });
@@ -73,7 +76,7 @@ invoicesRouter.put("/:id", async function (req, res) {
 
   const resultsUpdate = await db.query(
     `UPDATE invoices
-        SET id = $1, amt = $2, comp_code = $3, paid = $4, add_date = $5, 
+        SET id = $1, amt = $2, comp_code = $3, paid = $4, add_date = $5,
           paid_date = $6
         WHERE id = $1
         RETURNING id, amt, comp_code, paid, add_date, paid_date`,
